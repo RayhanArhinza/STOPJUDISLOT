@@ -330,12 +330,12 @@
         const coin = document.createElement('div');
         coin.textContent = coins[Math.floor(Math.random() * coins.length)];
         coin.style.position = 'absolute';
-        coin.style.fontSize = ${Math.random() * 1.5 + 1}rem;
-        coin.style.left = ${Math.random() * 100}%;
-        coin.style.top = ${Math.random() * 100}%;
-        coin.style.opacity = ${Math.random() * 0.8 + 0.2};
-        coin.style.transform = rotate(${Math.random() * 360}deg);
-        coin.style.animation = float ${Math.random() * 20 + 10}s linear infinite;
+        coin.style.fontSize = `${Math.random() * 1.5 + 1}rem`;
+        coin.style.left = `${Math.random() * 100}%`;
+        coin.style.top = `${Math.random() * 100}%`;
+        coin.style.opacity = `${Math.random() * 0.8 + 0.2}`;
+        coin.style.transform = `rotate(${Math.random() * 360}deg)`;
+        coin.style.animation = `float ${Math.random() * 20 + 10}s linear infinite`;
         
         // Tambahkan keyframe animasi untuk setiap koin
         const style = document.createElement('style');
@@ -366,7 +366,7 @@
     
     // Fungsi untuk mengatur animasi reel ke sudut tertentu
     function animateReel(reelElement, finalAngle) {
-      reelElement.style.transform = rotateX(${finalAngle}deg);
+      reelElement.style.transform = `rotateX(${finalAngle}deg)`;
     }
     
     // Fungsi untuk menampilkan modal jackpot dengan efek rumbling
@@ -403,21 +403,21 @@
         const confetti = document.createElement('div');
         const size = Math.random() * 10 + 5;
         
-        confetti.style.width = ${size}px;
-        confetti.style.height = ${size}px;
+        confetti.style.width = `${size}px`;
+        confetti.style.height = `${size}px`;
         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         confetti.style.position = 'fixed';
         confetti.style.top = '-10px';
-        confetti.style.left = ${Math.random() * 100}vw;
+        confetti.style.left = `${Math.random() * 100}vw`;
         confetti.style.opacity = Math.random();
         confetti.style.zIndex = '15';
         confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-        confetti.style.transform = rotate(${Math.random() * 360}deg);
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
         
         // Animasi jatuh
         confetti.animate([
-          { transform: translateY(0) rotate(0deg), opacity: 1 },
-          { transform: translateY(${window.innerHeight}px) rotate(${360 + Math.random() * 360}deg), opacity: 0 }
+          { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+          { transform: `translateY(${window.innerHeight}px) rotate(${360 + Math.random() * 360}deg)`, opacity: 0 }
         ], {
           duration: Math.random() * 3000 + 2000,
           easing: 'cubic-bezier(0.2, 0.8, 0.3, 1)'
@@ -540,7 +540,7 @@
         reels.forEach((reel, index) => {
           // Nonaktifkan transisi untuk reset instan
           reel.style.transition = 'none';
-          reel.style.transform = rotateX(${outcomeIndices[index] * faceAngle}deg);
+          reel.style.transform = `rotateX(${outcomeIndices[index] * faceAngle}deg)`;
           // Paksa reflow agar perubahan diterapkan
           void reel.offsetWidth;
           // Kembalikan transisi untuk spin berikutnya
