@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Slot Machine 3D Edukasi - Sistem Credit dan Jackpot Modal</title>
+  <!-- Memuat Tailwind CSS dari CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+    
+    /* Container utama dengan efek neon */
+    .machine-container {
+      background: linear-gradient(145deg, #24243e, #302b63, #0f0c29);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
+                  0 0 20px rgba(78, 16, 255, 0.3),
+                  inset 0 0 10px rgba(255, 255, 255, 0.1);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(5deg);
+      overflow: hidden;
+    }
+    
+    /* Efek kabinet slot machine */
+    .machine-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 10px;
+      background: linear-gradient(90deg, #ff8a00, #e52e71);
+      border-radius: 1.5rem 1.5rem 0 0;
+    }
+    
+    /* Efek glow pada judul */
+    .title-glow {
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 
+                   0 0 20px rgba(82, 109, 254, 0.5),
+                   0 0 30px rgba(82, 109, 254, 0.3);
+      background-image: linear-gradient(45deg, #ff8a00, #e52e71, #ff8a00);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: glowPulse 3s infinite alternate;
+    }
+    
+    @keyframes glowPulse {
+      0% {
+        filter: brightness(100%) blur(0px);
+      }
+      100% {
+        filter: brightness(120%) blur(0.5px);
+      }
+    }
+    
+    /* Container slot dengan tampilan 3D yang ditingkatkan */
+    .slot {
+      perspective: 1000px;
+      width: 80px;
+      height: 80px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(145deg, #313131, #202020);
+      border-radius: 0.8rem;
+      border: 2px solid #444;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5),
+                  inset 0 2px 5px rgba(255, 255, 255, 0.1),
+                  inset 0 -2px 5px rgba(0, 0, 0, 0.5);
+      transform: rotateX(12deg);
+    }
+    
+    /* Efek glass pada slot */
+    .slot::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, 
+                                 rgba(255, 255, 255, 0.1) 0%, 
+                                 rgba(255, 255, 255, 0) 100%);
+      pointer-events: none;
+      border-radius: 0.7rem;
+      z-index: 10;
+    }
+    
+    /* Reel yang berputar, dengan efek 3D ditingkatkan */
+    .reel {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      transform-style: preserve-3d;
+      transition: transform 5s cubic-bezier(0.17, 0.67, 0.28, 0.95);
+    }
+    
+    /* Setiap wajah (face) pada reel */
+    .face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      line-height: 80px;
+      font-size: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backface-visibility: hidden;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    }
+    
+    /* Efek tombol metalik */
+    .spin-btn {
+      background: linear-gradient(145deg, #ff416c, #ff4b2b);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: bold;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3),
+                  inset 0 1px 3px rgba(255, 255, 255, 0.4);
+      transition: all 0.3s;
+      transform: translateY(0);
+    }
+    
+    .spin-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4),
+                  inset 0 1px 3px rgba(255, 255, 255, 0.4);
+    }
+    
+    .spin-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2),
+                  inset 0 1px 3px rgba(255, 255, 255, 0.4);
+    }
+    
+    /* Tampilan credit dengan efek kabinet */
+    .credit-display {
+      background: linear-gradient(145deg, #1d1d1d, #2d2d2d);
+      color: #22c55e;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      font-family: 'Digital-7', monospace;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8),
+                  0 0 5px rgba(34, 197, 94, 0.3);
+      letter-spacing: 1px;
+      border: 1px solid #444;
+    }
+    
+    /* Modal jackpot */
+    .modal-overlay {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+    }
+    
+    .jackpot-modal {
+      background: linear-gradient(135deg, #1e1e2f, #2d2d44);
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.5),
+                  0 0 100px rgba(255, 215, 0, 0.3);
+      border: 1px solid rgba(255, 215, 0, 0.5);
+      animation: modalPulse 2s infinite alternate;
+    }
+    
+    @keyframes modalPulse {
+      0% {
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.5),
+                    0 0 100px rgba(255, 215, 0, 0.3);
+      }
+      100% {
+        box-shadow: 0 0 50px rgba(255, 215, 0, 0.7),
+                    0 0 150px rgba(255, 215, 0, 0.5);
+      }
+    }
+    
+    .jackpot-title {
+      background: linear-gradient(to right, #f5d020, #f53803);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+    }
+    
+    /* Glow effect untuk hasil */
+    .result-win {
+      color: #f5d020;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+      animation: resultGlow 1.5s infinite alternate;
+    }
+    
+    @keyframes resultGlow {
+      0% {
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+      }
+      100% {
+        text-shadow: 0 0 20px rgba(255, 215, 0, 1);
+      }
+    }
+    
+    /* Input styling */
+    .win-rate-input {
+      background: #2a2a3a;
+      border: 1px solid #444;
+      border-radius: 0.3rem;
+      color: white;
+      padding: 0.3rem 0.5rem;
+      width: 4rem;
+      text-align: center;
+    }
+    
+    /* Media queries tambahan (opsional) untuk penyesuaian ekstra */
+    @media (min-width: 768px) {
+      .slot {
+        width: 100px;
+        height: 100px;
+      }
+      .face {
+        line-height: 100px;
+        font-size: 3.5rem;
+      }
+      .machine-container {
+        padding: 3rem;
+      }
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen py-8 text-white relative">
+  <!-- Latar belakang koin yang berterbangan -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none opacity-20" id="coinBg">
+    <!-- Koin dinamis akan ditambahkan melalui JS -->
+  </div>
+  
+  <div class="machine-container w-11/12 sm:w-10/12 md:max-w-lg lg:max-w-xl mx-auto z-10 mb-8">
+    <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-6 text-center title-glow">Slot Machine 3D</h1>
+    
+    <!-- Tampilan Credit dengan desain LCD -->
+    <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
+      <div class="credit-display text-lg sm:text-xl mb-3 sm:mb-0">
+        Credit: Rp<span id="creditAmount">1000</span>
+      </div>
+      <div class="bg-purple-800 px-3 py-1 rounded-full text-sm bg-opacity-50 border border-purple-600">
+        Mode Edukasi
+      </div>
+    </div>
+    
+    <!-- Tampilan Slot: setiap reel memiliki struktur 3D yang ditingkatkan -->
+    <div id="slotDisplay" class="flex space-x-2 sm:space-x-3 justify-center mb-8 transform perspective-1000">
+      <div class="slot">
+        <div id="reel1" class="reel">
+          <div class="face" style="transform: rotateX(0deg) translateZ(80px);">🍒</div>
+          <div class="face" style="transform: rotateX(72deg) translateZ(80px);">🍋</div>
+          <div class="face" style="transform: rotateX(144deg) translateZ(80px);">🍊</div>
+          <div class="face" style="transform: rotateX(216deg) translateZ(80px);">🍇</div>
+          <div class="face" style="transform: rotateX(288deg) translateZ(80px);">⭐</div>
+        </div>
+      </div>
+      <div class="slot">
+        <div id="reel2" class="reel">
+          <div class="face" style="transform: rotateX(0deg) translateZ(80px);">🍒</div>
+          <div class="face" style="transform: rotateX(72deg) translateZ(80px);">🍋</div>
+          <div class="face" style="transform: rotateX(144deg) translateZ(80px);">🍊</div>
+          <div class="face" style="transform: rotateX(216deg) translateZ(80px);">🍇</div>
+          <div class="face" style="transform: rotateX(288deg) translateZ(80px);">⭐</div>
+        </div>
+      </div>
+      <div class="slot">
+        <div id="reel3" class="reel">
+          <div class="face" style="transform: rotateX(0deg) translateZ(80px);">🍒</div>
+          <div class="face" style="transform: rotateX(72deg) translateZ(80px);">🍋</div>
+          <div class="face" style="transform: rotateX(144deg) translateZ(80px);">🍊</div>
+          <div class="face" style="transform: rotateX(216deg) translateZ(80px);">🍇</div>
+          <div class="face" style="transform: rotateX(288deg) translateZ(80px);">⭐</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Hasil Spin dengan efek glow -->
+    <p id="result" class="mb-5 text-lg sm:text-xl font-bold text-center min-h-[2rem]"></p>
+    
+    <!-- Tombol Spin dengan efek 3D -->
+    <button id="spinBtn" class="spin-btn w-full py-3 px-4 rounded-lg text-white font-bold text-lg">
+      Spin (Biaya: Rp100)
+    </button>
+    
+    <!-- Pengaturan tingkat kemenangan dengan desain responsif -->
+    <div class="mt-6 bg-black bg-opacity-30 rounded-lg p-3 flex flex-col sm:flex-row items-center justify-between">
+      <label for="winRate" class="font-semibold text-sm mb-2 sm:mb-0">Tingkat Kemenangan:</label>
+      <div class="flex items-center">
+        <input type="number" id="winRate" class="win-rate-input" value="30" min="0" max="100">
+        <span class="ml-1">%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Jackpot -->
+  <div id="jackpotModal" class="fixed inset-0 flex items-center justify-center hidden modal-overlay z-20">
+    <div class="jackpot-modal rounded-xl p-8 shadow-lg text-center max-w-sm mx-4">
+      <div class="relative mb-6">
+        <div class="absolute inset-0 flex items-center justify-center opacity-30">
+          <span style="font-size: 8rem;">💰</span>
+        </div>
+        <h2 class="text-3xl font-extrabold jackpot-title relative z-10">JACKPOT!</h2>
+      </div>
+      <p class="text-xl mb-8">Selamat, Anda memenangkan Rp500!</p>
+      <button id="closeModal" class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-3 px-8 rounded-lg transform transition-transform hover:scale-105">
+        Ambil Hadiah
+      </button>
+    </div>
+  </div>
+  
+  <script>
+    // Inisialisasi credit awal dan biaya spin serta bonus jackpot (dalam rupiah)
+    let credit = 1000;
+    const spinCost = 100;
+    const jackpotReward = 500;
+    
+    // Buat efek koin berterbangan di background
+    function createCoins() {
+      const coinContainer = document.getElementById('coinBg');
+      const coins = ['🪙', '💰', '💎', '💵'];
+      const coinCount = 15;
+      
+      for (let i = 0; i < coinCount; i++) {
+        const coin = document.createElement('div');
+        coin.textContent = coins[Math.floor(Math.random() * coins.length)];
+        coin.style.position = 'absolute';
+        coin.style.fontSize = ${Math.random() * 1.5 + 1}rem;
+        coin.style.left = ${Math.random() * 100}%;
+        coin.style.top = ${Math.random() * 100}%;
+        coin.style.opacity = ${Math.random() * 0.8 + 0.2};
+        coin.style.transform = rotate(${Math.random() * 360}deg);
+        coin.style.animation = float ${Math.random() * 20 + 10}s linear infinite;
+        
+        // Tambahkan keyframe animasi untuk setiap koin
+        const style = document.createElement('style');
+        style.textContent = `
+          @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) rotate(${Math.random() * 360}deg); }
+            100% { transform: translate(0, 0) rotate(${Math.random() * 720}deg); }
+          }
+        `;
+        document.head.appendChild(style);
+        
+        coinContainer.appendChild(coin);
+      }
+    }
+    
+    createCoins();
+    
+    // Tampilkan credit pada halaman
+    function updateCreditDisplay() {
+      document.getElementById('creditAmount').textContent = credit;
+    }
+    updateCreditDisplay();
+    
+    // Urutan simbol yang digunakan (urutan harus sama dengan urutan pada setiap reel)
+    const symbols = ['🍒', '🍋', '🍊', '🍇', '⭐'];
+    const faceAngle = 72; // 360/5
+    
+    // Fungsi untuk mengatur animasi reel ke sudut tertentu
+    function animateReel(reelElement, finalAngle) {
+      reelElement.style.transform = rotateX(${finalAngle}deg);
+    }
+    
+    // Fungsi untuk menampilkan modal jackpot dengan efek rumbling
+    function showJackpotModal() {
+      const modal = document.getElementById('jackpotModal');
+      modal.classList.remove('hidden');
+      
+      // Tambahkan efek goncangan ringan pada modal
+      const modalContent = modal.querySelector('.jackpot-modal');
+      modalContent.animate([
+        { transform: 'translateX(-3px) translateY(-2px)' },
+        { transform: 'translateX(0px) translateY(3px)' },
+        { transform: 'translateX(3px) translateY(-1px)' },
+        { transform: 'translateX(-2px) translateY(2px)' },
+        { transform: 'translateX(1px) translateY(-3px)' },
+        { transform: 'translateX(0px) translateY(0px)' }
+      ], {
+        duration: 500,
+        iterations: 4
+      });
+    }
+    
+    // Fungsi untuk menutup modal jackpot
+    document.getElementById('closeModal').addEventListener('click', () => {
+      document.getElementById('jackpotModal').classList.add('hidden');
+    });
+    
+    // Efek visual konfeti untuk jackpot
+    function createConfetti() {
+      const colors = ['#ff0000', '#ffa500', '#ffff00', '#00ff00', '#0000ff', '#800080'];
+      const container = document.body;
+      
+      for (let i = 0; i < 100; i++) {
+        const confetti = document.createElement('div');
+        const size = Math.random() * 10 + 5;
+        
+        confetti.style.width = ${size}px;
+        confetti.style.height = ${size}px;
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.position = 'fixed';
+        confetti.style.top = '-10px';
+        confetti.style.left = ${Math.random() * 100}vw;
+        confetti.style.opacity = Math.random();
+        confetti.style.zIndex = '15';
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        confetti.style.transform = rotate(${Math.random() * 360}deg);
+        
+        // Animasi jatuh
+        confetti.animate([
+          { transform: translateY(0) rotate(0deg), opacity: 1 },
+          { transform: translateY(${window.innerHeight}px) rotate(${360 + Math.random() * 360}deg), opacity: 0 }
+        ], {
+          duration: Math.random() * 3000 + 2000,
+          easing: 'cubic-bezier(0.2, 0.8, 0.3, 1)'
+        }).onfinish = () => {
+          confetti.remove();
+        };
+        
+        container.appendChild(confetti);
+      }
+    }
+    
+    // Fungsi untuk melakukan spin slot dengan animasi 3D yang ditingkatkan
+    function spinSlots() {
+      const spinBtn = document.getElementById('spinBtn');
+      const resultElem = document.getElementById('result');
+      
+      // Cek credit sebelum spin
+      if (credit < spinCost) {
+        resultElem.textContent = "Credit tidak cukup!";
+        resultElem.className = "mb-5 text-lg font-bold text-center text-red-500";
+        
+        // Tambahkan efek shake pada display credit
+        document.querySelector('.credit-display').animate([
+          { transform: 'translateX(-5px)' },
+          { transform: 'translateX(5px)' },
+          { transform: 'translateX(-5px)' },
+          { transform: 'translateX(5px)' },
+          { transform: 'translateX(0)' }
+        ], {
+          duration: 500,
+          iterations: 1
+        });
+        
+        return;
+      }
+      
+      // Kurangi credit sesuai biaya spin
+      credit -= spinCost;
+      updateCreditDisplay();
+      
+      spinBtn.disabled = true;
+      spinBtn.classList.add('opacity-50');
+      resultElem.textContent = '';
+      resultElem.className = "mb-5 text-lg font-bold text-center min-h-[2rem]";
+      
+      // Ambil nilai tingkat kemenangan
+      const winRate = parseInt(document.getElementById('winRate').value) / 100;
+      
+      // Tentukan apakah spin menghasilkan kemenangan atau tidak
+      let isWin = Math.random() < winRate;
+      
+      // Tentukan outcome untuk tiap reel (indeks simbol)
+      let outcomeIndices = [];
+      if (isWin) {
+        let winningIndex = Math.floor(Math.random() * symbols.length);
+        outcomeIndices = [winningIndex, winningIndex, winningIndex];
+      } else {
+        outcomeIndices = [
+          Math.floor(Math.random() * symbols.length),
+          Math.floor(Math.random() * symbols.length),
+          Math.floor(Math.random() * symbols.length)
+        ];
+        if (outcomeIndices[0] === outcomeIndices[1] && outcomeIndices[1] === outcomeIndices[2]) {
+          outcomeIndices[2] = (outcomeIndices[2] + 1) % symbols.length;
+        }
+      }
+      
+      // Extra putaran penuh untuk animasi (misalnya 5 putaran untuk efek yang lebih lama)
+      const extraRotations = 5;
+      
+      // Ambil elemen reel
+      const reels = [
+        document.getElementById('reel1'),
+        document.getElementById('reel2'),
+        document.getElementById('reel3')
+      ];
+      
+      // Animasi tiap reel dengan efek stagger
+      reels.forEach((reel, index) => {
+        // Hitung sudut akhir: extra rotasi + posisi outcome
+        let finalAngle = extraRotations * 360 + outcomeIndices[index] * faceAngle;
+        setTimeout(() => {
+          animateReel(reel, finalAngle);
+          
+          // Tambahkan getaran ringan pada mesin saat reel berputar
+          document.querySelector('.machine-container').animate([
+            { transform: 'rotateX(5deg) translateY(0)' },
+            { transform: 'rotateX(5.5deg) translateY(-2px)' },
+            { transform: 'rotateX(4.8deg) translateY(1px)' },
+            { transform: 'rotateX(5deg) translateY(0)' }
+          ], {
+            duration: 300,
+            iterations: 1
+          });
+          
+        }, index * 200);
+      });
+      
+      // Setelah animasi selesai (5 detik + delay reel terakhir)
+      setTimeout(() => {
+        const outcomeSymbols = outcomeIndices.map(i => symbols[i]);
+        let jackpot = (outcomeSymbols[0] === outcomeSymbols[1] && outcomeSymbols[1] === outcomeSymbols[2]);
+        
+        if (jackpot) {
+          resultElem.textContent = "JACKPOT! Anda Menang!";
+          resultElem.className = "mb-5 text-lg font-bold text-center result-win";
+          
+          // Jika jackpot, tambahkan bonus credit, tampilkan modal jackpot dan efek konfeti
+          credit += jackpotReward;
+          showJackpotModal();
+          createConfetti();
+        } else {
+          resultElem.textContent = "Coba Lagi!";
+          resultElem.className = "mb-5 text-lg font-bold text-center";
+        }
+        
+        updateCreditDisplay();
+        
+        // Reset posisi tiap reel ke posisi outcome (tanpa extra rotasi) agar spin berikutnya konsisten
+        reels.forEach((reel, index) => {
+          // Nonaktifkan transisi untuk reset instan
+          reel.style.transition = 'none';
+          reel.style.transform = rotateX(${outcomeIndices[index] * faceAngle}deg);
+          // Paksa reflow agar perubahan diterapkan
+          void reel.offsetWidth;
+          // Kembalikan transisi untuk spin berikutnya
+          reel.style.transition = 'transform 5s cubic-bezier(0.17, 0.67, 0.28, 0.95)';
+        });
+        
+        spinBtn.disabled = false;
+        spinBtn.classList.remove('opacity-50');
+      }, 5500);
+    }
+    
+    document.getElementById('spinBtn').addEventListener('click', spinSlots);
+  </script>
+</body>
+</html>
