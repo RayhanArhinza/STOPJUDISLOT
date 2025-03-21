@@ -214,6 +214,32 @@
       text-align: center;
     }
     
+    /* Banner peringatan Stop Judi Online (ukuran lebih kecil) */
+    .warning-banner {
+      background: linear-gradient(135deg, #dc2626, #ef4444);
+      color: #fff;
+      text-align: center;
+      padding: 0.5rem; /* dikurangi */
+      font-size: 1.2rem; /* dikurangi */
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.03);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+    
     /* Media queries tambahan (opsional) untuk penyesuaian ekstra */
     @media (min-width: 768px) {
       .slot {
@@ -231,12 +257,18 @@
   </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen py-8 text-white relative">
+  <!-- Banner peringatan Stop Judi Online -->
+  <div class="w-full warning-banner fixed top-0 left-0 z-30">
+    <h2>Stop Judi Online!</h2>
+    <p>Game ini hanya untuk edukasi!</p>
+  </div>
+  
   <!-- Latar belakang koin yang berterbangan -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none opacity-20" id="coinBg">
     <!-- Koin dinamis akan ditambahkan melalui JS -->
   </div>
   
-  <div class="machine-container w-11/12 sm:w-10/12 md:max-w-lg lg:max-w-xl mx-auto z-10 mb-8">
+  <div class="machine-container w-11/12 sm:w-10/12 md:max-w-lg lg:max-w-xl mx-auto z-10 mb-8 mt-20">
     <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-6 text-center title-glow">Slot Machine 3D</h1>
     
     <!-- Tampilan Credit dengan desain LCD -->
